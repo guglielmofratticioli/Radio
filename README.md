@@ -1,18 +1,25 @@
 ## Getting Started
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Download Radio.jar (tested on java11).  
 
-## Folder Structure
+Run it with :
 
-The workspace contains two folders by default, where:
+'java -jar Radio.jar'
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+### Tutorial 
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+You can import Audio samples (.wav format) by drag and drop from your File Explorer
 
-## Dependency Management
+( n.b. Drag n drop is activated once user has clicked on the app screen ) 
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+You can create a new pattern Item by double click on the App window. 
+
+You can connect a pattern to a sample item or to another pattern; to do it just drag an arrow clicking in the colored triangle in the pattern item, then release the mouse once you are over the other item 
+
+You can edit a pattern by clicking on the black dots, you can expand it or reduce it by clicking at + / <- 
+
+
+You can change a sample volume clicking at +/- buttons
+
+You can rename a sample if double click on its label
