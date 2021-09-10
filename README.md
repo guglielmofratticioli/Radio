@@ -23,3 +23,12 @@ You can edit a pattern by clicking on the black dots, you can expand it or reduc
 You can change a sample volume clicking at +/- buttons
 
 You can rename a sample if double click on its label
+
+
+---------
+
+You can zoom with the mouse wheel, you can drag items around
+
+You can delete an item/edge by pressing 'cancel' once selected
+
+You can select multiple items by holding down ctrl to create a square selection.
