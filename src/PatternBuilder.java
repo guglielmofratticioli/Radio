@@ -2,16 +2,21 @@ import java.awt.Color;
 import java.util.Random;
 
 import com.mxgraph.util.mxHtmlColor;
-public class PatternBuilder {
+
+public class PatternBuilder 
+{
 
     private GraphPanel graphPanel;
     private ItemMediator itemMediator;
     
-    public PatternBuilder(GraphPanel graphPanel , ItemMediator itemMediator ){
+    public PatternBuilder(GraphPanel graphPanel , ItemMediator itemMediator ) // init
+    {
         this.graphPanel = graphPanel;
         this.itemMediator = itemMediator;
     }
-    public Pattern build(String name, int length, String color){
+    
+    public Pattern build(String name, int length, String color) // builds the pattern , add pattern Cell, connects observer/observable
+    {
         
         Pattern pattern = new Pattern(name,length);
         

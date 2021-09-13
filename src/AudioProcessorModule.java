@@ -1,11 +1,14 @@
 import java.io.Serializable;
 
 import javax.sound.sampled.AudioFormat;
-public interface AudioProcessorModule extends Serializable{
+
+public interface AudioProcessorModule extends Serializable 
+{
 
     public void process(byte[] samples, AudioFormat format);
 
-    class FormatNotSupportedException extends RuntimeException {
+    class FormatNotSupportedException extends RuntimeException 
+    {
         FormatNotSupportedException(String error) {
             super(error);
         }

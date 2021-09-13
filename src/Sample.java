@@ -1,52 +1,63 @@
 import java.io.File;
 import java.io.Serializable;
-public class Sample extends Observable implements Item, Serializable {
+import java.util.ArrayList;
 
-    private final Item child = null;
-    private Item father = null;
+public class Sample extends Observable implements Item, Serializable 
+{
+
+    private final Item children = null;
+    private ArrayList<Item> fathers = new ArrayList<Item>();
     private String name;
     private String color;
     private AudioPlayer player;
     private File file;
 
-    public Sample(){
+    public Sample() //init
+    {
 
     }
-    public Sample(String name, File file) {
+    public Sample(String name, File file) // new Audioplayer from File 
+    {
         this.name = name;
         this.player = new AudioPlayer(file);
     }
 
 
     @Override
-    public Object play() {
+    public void play() // Stops the Audioplayer if it is playing before playing
+    {
         if(this.player.isRunning()) this.player.stop();
         this.player.play();       
-        return this.player;
     }
     @Override
-    public Object stop() {
+    public void stop() 
+    {
         this.player.stop();
-        return this.player;
     }
     @Override
-    public Item getChild() {
-        return child;
-    }
-    @Override 
-    public Item getFather(){
-        return this.father;
+    public void addFather(Item father) 
+    {
+        fathers.add(father);
     }
     @Override
-    public void setFather(Item father){
-        this.father = father;
+    public void addChild(Item child) 
+    {
+        return;
     }
     @Override
-    public void setChild(Item child){
-        System.out.println("Sample Item does must not have child Item !!");
+    public void removeFather(Item father) 
+    {
+        fathers.remove(father);
     }
+    @Override
+    public void removeChild(Item child) 
+    {
+        return;
+    }
+    
 
-    public void volumeUp(){
+    public void volumeUp() // raise volume by 10%
+    {
         Gain gain = (Gain) player.getProcessor().getModuleAt(0);
         int level = gain.getGain() + 10;
         if(level > 100)
@@ -54,7 +65,8 @@ public class Sample extends Observable implements Item, Serializable {
         gain.setGain(level);
         notifyChanges();
     }
-    public void volumeDown(){
+    public void volumeDown() // lower volume by 10%
+    {
         Gain gain = (Gain) player.getProcessor().getModuleAt(0);
         int level = gain.getGain() - 10;
         if(level < 0)
@@ -66,35 +78,44 @@ public class Sample extends Observable implements Item, Serializable {
 
     // Getter/Setter
 
-    public String getName() {
+    public String getName() 
+    {
         return this.name;
     }
 
-    public void setName(String name) {
+    public void setName(String name) 
+    {
         this.name = name;
     }
 
-    public AudioPlayer getPlayer() {
+    public AudioPlayer getPlayer() 
+    {
         return this.player;
     }
 
-    public void setPlayer(AudioPlayer player) {
+    public void setPlayer(AudioPlayer player) 
+    {
         this.player = player;
     }
-    public String getColor() {
+    public String getColor() 
+    {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(String color) 
+    {
         this.color = color;
     }
 
-    public File getFile() {
+    public File getFile() 
+    {
         return this.file;
     }
 
-    public void setFile(File file) {
+    public void setFile(File file) 
+    {
         this.file = file;
     }
     //
+
 }

@@ -1,10 +1,10 @@
 public interface Item {
-    public Object play();
-    public Object stop();
+    public void play();
+    public void stop();
 
-    public Item getFather();
-    public Item getChild();
+    public void addFather(Item father);
+    public void addChild(Item child);
 
-    public void setFather(Item father);
-    public void setChild(Item child);
+    public void removeFather(Item father);
+    public void removeChild(Item child);
 }

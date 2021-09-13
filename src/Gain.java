@@ -1,31 +1,42 @@
 import javax.sound.sampled.AudioFormat;
 
 import utils.Utils;
-public class Gain implements AudioProcessorModule {
+
+// Gain changes audio volume by scaling audio samples value
+public class Gain implements AudioProcessorModule 
+{
 
     private int gain;
 
-    public Gain() {
+    public Gain() 
+    {
         this.gain = 100;
     }
 
-    public void process(byte[] samples, AudioFormat format) throws FormatNotSupportedException {
-        if (format.getSampleSizeInBits() == 8) {
+    public void process(byte[] samples, AudioFormat format) throws FormatNotSupportedException 
+    {
+
+        if (format.getSampleSizeInBits() == 8) {                            // supporting only 16 bit audio 
             throw new FormatNotSupportedException("File Format is 8 bit");
 
         }
-        int nchannels = format.getChannels();
-        int frameSize = format.getFrameSize();
-        // System.out.println(frameSize);
-        // System.out.println(nchannels);
-        for (int frame = 0; frame < samples.length; frame += frameSize) {
+
+        int nchannels = format.getChannels();                               // Stereo vs Mono audio 
+        int frameSize = format.getFrameSize();                              // an audio frame is 2*16 bit in Stereo and 16 bit in mono
+
+        for (int frame = 0; frame < samples.length; frame += frameSize) {   //iterate through audio samples     
+            
+            // Mono 
             if (nchannels == 1) {
-                short val = Utils.ByteToShort(samples[frame], samples[frame + 1], !format.isBigEndian(), true);
-                val = (short) (val * gain / 100);
-                byte[] bytes = (Utils.ShortToByte(val));
+                // converting byte to short
+                short val = Utils.ByteToShort(samples[frame], samples[frame + 1], !format.isBigEndian(), true);   
+                val = (short) (val * gain / 100);                           // scaling value
+                byte[] bytes = (Utils.ShortToByte(val));                    // reconverting in byte
                 samples[frame] = bytes[0];
                 samples[frame + 1] = bytes[1];
-            } else if (nchannels == 2) {
+            } 
+            // Stereo is same for Mono but with 2 channels
+            else if (nchannels == 2) {
                 short lval = Utils.ByteToShort(samples[frame], samples[frame + 1], !format.isBigEndian(), true);
                 short rval = Utils.ByteToShort(samples[frame + 2], samples[frame + 3], !format.isBigEndian(), true);
                 lval = (short) (lval * gain / 100);
@@ -44,11 +55,13 @@ public class Gain implements AudioProcessorModule {
 
     }
 
-    public void setGain(int gain) {
+    public void setGain(int gain) 
+    {
         this.gain = gain;
     }
 
-    public int getGain() {
+    public int getGain() 
+    {
         return this.gain;
     }
 

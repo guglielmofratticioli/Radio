@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import com.mxgraph.io.mxCodecRegistry;
 import com.mxgraph.io.mxObjectCodec;
@@ -41,46 +42,47 @@ import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxEdgeStyle;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
-public class GraphPanel extends JPanel {  
 
-    GraphPanel thisPanel = this;
-    DropTarget dp;
-    ItemMediator itemMediator;
-    private int PORT_DIAMETER = 10;
-    final int PORT_RADIUS = PORT_DIAMETER / 2;
-    private mxGraphOutline graphOutline;
-    private mxGraphComponent graphComponent;
-    private int mousePosX = 0;
-    private int mousePosY = 0;
-    private mxRubberband rubberBand;
-    private boolean mouseScroll;
-    private mxGraph graph;
-    Map<String, Object> style;
+// in this panel will be displayed a customized mxGraph
+public class GraphPanel extends JPanel 
+{  
 
-    public GraphPanel(ItemMediator itemMediator) {
+    GraphPanel thisPanel = this;                    // holds reference to itself, needed to forward a graphpanel reference inside mouseClicked Listener
+    DropTarget dp;                                  // drag n drop functionality            
+    ItemMediator itemMediator;                      
+    
+    private mxGraphOutline graphOutline;            // an graph is composed by : mxGraph <- Model , mxGraphComponent <- Swing View , mxGraphOutline <- perimeter
+    private mxGraphComponent graphComponent;        
+    private int mousePosX = 0;                      // stores mouse positions
+    private int mousePosY = 0;  
+    private mxRubberband rubberBand;                // rubber band selection support
+    private boolean mouseScroll;                    // state to enable scrolling behaviour
+    private mxGraph graph;                          // mxGraph model
+    Map<String, Object> style;                      // here is the default mxGraph style
+
+    public GraphPanel(ItemMediator itemMediator) 
+    {
         super();
         this.itemMediator = itemMediator;
 
-        mxCodecRegistry.register(new mxObjectCodec(	new Pattern()));
+        mxCodecRegistry.register(new mxObjectCodec(	new Pattern()));        // needed to store Java Objects as mxCell values
         mxCodecRegistry.register(new mxObjectCodec(	new Sample()));
         mxCodecRegistry.register(new mxObjectCodec(	new Step()));
         
-        this.
-        graph = new mxGraph() {
+        this.graph = new mxGraph() {                                      // istantiate a customized mxGraph, with inline methods reimplementation
 
-            public boolean isPort(Object cell) {
-                mxGeometry geo = getCellGeometry(cell);
+            public boolean isPort(Object cell) {                          // enables Input/Output port support for connecting cells
+                mxGeometry geo = getCellGeometry(cell);     
                 return (geo != null) ? geo.isRelative() : false;
             }
-
+                                                                          // avoid cell folding
             public boolean isCellFoldable(Object cell, boolean collapse) {
                 return false;
             }
-
+                                                                          // empty string label over the cell when value is instance of Pattern/Sample
             public String convertValueToString(Object cell) {
                 if (cell instanceof mxCell) {
                     Object value = ((mxCell) cell).getValue();
-
                     if (value instanceof Pattern || value instanceof Step || value instanceof Sample) {
                         return "";
                     }
@@ -97,21 +99,20 @@ public class GraphPanel extends JPanel {
         //Initialize Graph Here
         this.graph.getModel().beginUpdate();
         try {
-            
         } finally {
             graph.getModel().endUpdate();
         }
 
-
-        this.graph.setBorder(500);
-        
+        // Graph styling
+        this.graph.setBorder(750);
         this.graph.setKeepEdgesInBackground(true);
         this.graphComponent = new mxGraphComponent(graph);
         Color c = new Color(100,10,100,0);
         this.graphComponent.getViewport().setBackground(c);
         this.graphComponent.getViewport().setOpaque(false);
-        this.graphComponent.getViewport().setAutoscrolls(true);
+        //this.graphComponent.getViewport().setAutoscrolls(true);
         this.graphComponent.setOpaque(false);
+        this.graphComponent.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         this.graphOutline = new mxGraphOutline(graphComponent);
         this.rubberBand = new mxRubberband(graphComponent);
         this.rubberBand.setEnabled(false);
@@ -123,32 +124,34 @@ public class GraphPanel extends JPanel {
         setBackground(Color.decode("#2c2c2c"));
         setOpaque(true);
 
-        graph.setMultigraph(false);
+        //graph.setMultigraph(false);
 		graph.setAllowDanglingEdges(false);
-
-        this.setSize(300, 300);
-        
+        //this.setSize(300, 300);     
         this.installListeners();
     }
-
     @Override 
-    protected void paintComponent(Graphics g) {
-       
+    protected void paintComponent(Graphics g) // Painting dot grid on the background
+    {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D)g.create();
         g2d.setColor(Color.decode("#5c5c5c"));
-        for(int i = 0 ; i < 500; i+=25){
-            for(int j = 0; j <500; j+=25){
+        for(int i = 0 ; i < 750; i+=25){
+            for(int j = 0; j <750; j+=25){
                 g2d.fillOval(i, j, 3, 3);
             }
         }
     }
+
     //Getter/Setter
-    public mxGraph getGraph(){
+    public mxGraph getGraph()
+    {
         return this.graph;
     }
     //
-    protected void installListeners() {
+    
+    
+    protected void installListeners() // install all event listener for the graph
+    {
         //DragnDrop
         class DragListener implements DropTargetListener{
 
@@ -203,12 +206,11 @@ public class GraphPanel extends JPanel {
                 
             }
         
-        }
-       
+        }  
+        
         SampleBuilder sb = new SampleBuilder(this,itemMediator);
         DragListener dragListener = new DragListener(sb);
         
-    
         // wheel
         MouseWheelListener wheelTracker = new MouseWheelListener() {
 
@@ -263,7 +265,7 @@ public class GraphPanel extends JPanel {
                     } 
                    
                 }
-                graphComponent.refresh();
+               // graphComponent.refresh();
 
             }
 
@@ -344,16 +346,16 @@ public class GraphPanel extends JPanel {
                         if (((mxChildChange) change).getIndex() == 0) {
                             if (alteredCell.isEdge())
                                 {
-                                ((Item)alteredCell.getSource().getValue()).setChild(null);;
-                                ((Item)alteredCell.getTarget().getValue()).setFather(null);
+                                ((Item)alteredCell.getSource().getValue()).removeChild((Item)alteredCell.getTarget().getValue());;
+                                ((Item)alteredCell.getTarget().getValue()).removeFather((Item)alteredCell.getSource().getValue());
                             }
                             else
                                 System.out.println("vertex");
                             System.out.println("deleted");
                         } else if (((mxChildChange) change).getPreviousIndex() == 0) {
                             if (alteredCell.isEdge()){
-                                ((Item)alteredCell.getSource().getValue()).setChild((Item)alteredCell.getTarget().getValue());;
-                                ((Item)alteredCell.getTarget().getValue()).setFather((Item)alteredCell.getSource().getValue());
+                                ((Item)alteredCell.getSource().getValue()).addChild((Item)alteredCell.getTarget().getValue());;
+                                ((Item)alteredCell.getTarget().getValue()).addFather((Item)alteredCell.getSource().getValue());
                             }
                                 
                             else
@@ -368,21 +370,24 @@ public class GraphPanel extends JPanel {
 
         
     }
-
-    protected void mouseWheelMoved(MouseWheelEvent e) {
+    
+    protected void mouseWheelMoved(MouseWheelEvent e) // zoom
+    {
         if (e.getWheelRotation() < 0) {
             zoom(1.1);
         } else {
             zoom(1 / 1.1);
         }
     }
-
-    protected void mouseLocationChanged(MouseEvent e) {
+    
+    protected void mouseLocationChanged(MouseEvent e) // translate
+    {
         mousePosX = e.getX();
         mousePosY = e.getY();
     }
 
-    public void zoom(double factor) {
+    public void zoom(double factor) 
+    {
         mxGraphView view = graphComponent.getGraph().getView();
         double newScale = (double) ((int) (view.getScale() * 100 * factor)) / 100;
 
@@ -392,17 +397,20 @@ public class GraphPanel extends JPanel {
         }
     }
 
-    public Observer addPatternCell(Pattern pattern){
+    public Observer addPatternCell(Pattern pattern)
+    {
         PatternCell patternCell =  new PatternCell(graph, pattern);
         return patternCell;
     }
     
-    public Observer addSampleCell(Sample sample){
+    public Observer addSampleCell(Sample sample)
+    {
         SampleCell sampleCell = new SampleCell(graph, sample);
         return sampleCell;
     }
-
-    class PatternCell implements Observer{
+    
+    class PatternCell implements Observer // Pattern item cell  class
+    {
         
         private Pattern pattern;
         private mxGraph graph;
@@ -415,8 +423,12 @@ public class GraphPanel extends JPanel {
         private mxGeometry outPortGeometry;
         private mxCell add;
         private mxCell remove;
+        private int PORT_DIAMETER = 20;                 // sizes for pattern buttons
+        final int PORT_RADIUS = PORT_DIAMETER / 2;
         
-        public PatternCell(mxGraph graph, Pattern pattern){
+        
+        public PatternCell(mxGraph graph, Pattern pattern) // building cell body and ports
+        {
 
             this.pattern = pattern;
             this.graph = graph;
@@ -463,9 +475,9 @@ public class GraphPanel extends JPanel {
 
         }
         
-        
         @Override
-        public void update() {
+        public void update() // updating whole view on Pattern properties changes
+        {
             //update length
             mxGeometry old = patternCell.getGeometry();
             patternCell.setGeometry(new mxGeometry( old.getX(), old.getY() , 25 * pattern.getPattern().length, 30));
@@ -477,8 +489,8 @@ public class GraphPanel extends JPanel {
             buttons.clear();
             for (int i = 0; i < pattern.getPattern().length; i++) { 
                 
-                mxGeometry buttonGeometry = new mxGeometry(i / ((double) pattern.getPattern().length), 0.483, PORT_DIAMETER / 2, PORT_DIAMETER / 2); 
-                buttonGeometry.setOffset(new mxPoint(-PORT_RADIUS / 2, -PORT_RADIUS / 2));
+                mxGeometry buttonGeometry = new mxGeometry(i / ((double) pattern.getPattern().length), 0.483, PORT_DIAMETER / 4, PORT_DIAMETER / 4); 
+                buttonGeometry.setOffset(new mxPoint(-PORT_RADIUS / 4, -PORT_RADIUS / 4));
                 buttonGeometry.setRelative(true); 
                 mxCell button = new mxCell(pattern.getPattern()[i], buttonGeometry,null); 
                 if(pattern.getPattern()[i].getState() == StepState.OFF){
@@ -501,9 +513,10 @@ public class GraphPanel extends JPanel {
             graph.refresh();
             
         }
-
+        
         @Override
-        public void update(Object object) {
+        public void update(Object object) // updating only a singular step 
+        {
             
             if( object instanceof Step ){
                 Step step = (Step)object;
@@ -529,7 +542,7 @@ public class GraphPanel extends JPanel {
             
         }
         
-        //Getter/Setter
+        // Getter/Setter
         public mxCell getInPort() {
             return inPort;
         }
@@ -573,7 +586,8 @@ public class GraphPanel extends JPanel {
 
     }
     
-    class SampleCell implements Observer {
+    class SampleCell implements Observer  // Sample item cell class
+    {
         private Sample sample;
         private mxCell sampleCell;
         private mxCell volumeUp;
@@ -581,7 +595,9 @@ public class GraphPanel extends JPanel {
         private mxCell nameCell;
 
         // TODO waveform PNG visualizer
-        public SampleCell(mxGraph graph, Sample sample){
+        
+        public SampleCell(mxGraph graph, Sample sample) // building a colored Square, name label and voume buttons
+        {
             this.sample = sample;
 
             sampleCell = (mxCell) graph.insertVertex(graph.getDefaultParent(), null, sample, mousePosX, mousePosY, 50, 50,
@@ -613,8 +629,10 @@ public class GraphPanel extends JPanel {
             graph.addCell(nameCell,sampleCell);
             
         }
+       
         @Override
-        public void update() {
+        public void update()   // update Color opacity based on sample volume
+        {
             sampleCell.setStyle("resizable=0;rounded=false;strokeColor="+sample.getColor()+";fillColor="+sample.getColor()+";editable=false");
             System.out.println(((Gain)sample.getPlayer().getProcessor().getModuleAt(0)).getGain());
             sampleCell.setStyle("opacity="+((Gain)sample.getPlayer().getProcessor().getModuleAt(0)).getGain()+";resizable=0;rounded=false;strokeColor="+sample.getColor()+";fillColor="+sample.getColor()+";editable=false");
