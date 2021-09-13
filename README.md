@@ -32,3 +32,7 @@ You can zoom with the mouse wheel, you can drag items around
 You can delete an item/edge by pressing 'cancel' once selected
 
 You can select multiple items by holding down ctrl to create a square selection.
+
+_____
+
+You can drag the audio files inside the folder /samples/ to the application to test it
