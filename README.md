@@ -35,4 +35,4 @@ You can select multiple items by holding down ctrl to create a square selection.
 
 _____
 
-You can download the audio files inside samples/ to the application to test it
+You can download the audio files inside /samples/ to the application to test it
